@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nestwise — AI Room Redesign</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --clay: #C4956A; --sand: #E8D5B7; --warm-white: #FAF6F0;
+      --bark: #6B4F3A; --moss: #7A8C6E; --charcoal: #2E2A26;
+      --light-clay: #F2E4D4; --terracotta: #B5634A;
+    }
+    body { font-family: 'Lato', sans-serif; background: var(--warm-white); color: var(--charcoal); }
+    .nav { display:flex; align-items:center; justify-content:space-between; padding:18px 40px; background:var(--warm-white); border-bottom:1px solid var(--sand); position:sticky; top:0; z-index:100; }
+    .logo { font-family:'Playfair Display',serif; font-size:1.6rem; color:var(--bark); letter-spacing:-0.5px; }
+    .logo span { color:var(--clay); font-style:italic; }
+    .nav-links { display:flex; gap:28px; align-items:center; }
+    .nav-links a { text-decoration:none; color:var(--bark); font-size:0.88rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer; transition:color 0.2s; }
+    .nav-links a:hover { color:var(--clay); }
+    .nav-cta { background:var(--bark); color:var(--warm-white) !important; padding:10px 22px; border-radius:30px; }
+    .nav-cta:hover { background:var(--clay) !important; }
+    .hero { display:grid; grid-template-columns:1fr 1fr; min-height:88vh; background:linear-gradient(135deg, var(--warm-white) 0%, var(--light-clay) 100%); }
+    .hero-left { display:flex; flex-direction:column; justify-content:center; padding:60px 60px 60px 80px; }
+    .hero-tag { display:inline-block; background:var(--sand); color:var(--bark); font-size:0.75rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; padding:6px 14px; border-radius:20px; margin-bottom:24px; }
+    .hero-h1 { font-family:'Playfair Display',serif; font-size:3.8rem; line-height:1.15; color:var(--charcoal); margin-bottom:20px; }
+    .hero-h1 em { color:var(--clay); font-style:italic; }
+    .hero-sub { color:#6B6055; font-size:1.05rem; line-height:1.7; max-width:420px; margin-bottom:36px; }
+    .hero-btns { display:flex; gap:14px; flex-wrap:wrap; }
+    .btn-primary { background:var(--bark); color:var(--warm-white); border:none; padding:14px 30px; border-radius:30px; font-size:0.95rem; font-weight:700; cursor:pointer; transition:all 0.2s; font-family:'Lato',sans-serif; }
+    .btn-primary:hover { background:var(--clay); transform:translateY(-2px); box-shadow:0 8px 24px rgba(100,60,30,0.18); }
+    .btn-secondary { background:transparent; color:var(--bark); border:2px solid var(--clay); padding:13px 28px; border-radius:30px; font-size:0.95rem; font-weight:700; cursor:pointer; transition:all 0.2s; font-family:'Lato',sans-serif; }
+    .btn-secondary:hover { background:var(--light-clay); }
+    .hero-right { display:flex; align-items:center; padding:40px 40px 40px 20px; }
+    .hero-img-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; width:100%; }
+    .room-card { border-radius:16px; overflow:hidden; position:relative; }
+    .room-card-1 { grid-row:span 2; }
+    .room-placeholder { display:flex; align-items:center; justify-content:center; font-family:'Playfair Display',serif; color:var(--warm-white); text-align:center; padding:20px; flex-direction:column; gap:10px; }
+    .room-badge { position:absolute; bottom:12px; left:12px; background:rgba(250,246,240,0.92); backdrop-filter:blur(6px); border-radius:10px; padding:8px 12px; }
+    .room-badge-label { font-size:0.7rem; font-weight:700; color:var(--clay); text-transform:uppercase; letter-spacing:0.08em; }
+    .room-badge-name { font-size:0.85rem; color:var(--charcoal); }
+    .stats { display:flex; background:var(--bark); }
+    .stat { flex:1; text-align:center; padding:28px 20px; border-right:1px solid rgba(255,255,255,0.12); }
+    .stat:last-child { border-right:none; }
+    .stat-num { font-family:'Playfair Display',serif; font-size:2rem; color:var(--sand); }
+    .stat-label { font-size:0.78rem; color:rgba(232,213,183,0.7); text-transform:uppercase; letter-spacing:0.1em; margin-top:4px; }
+    .section { padding:80px; }
+    .section-tag { font-size:0.75rem; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; color:var(--clay); margin-bottom:12px; }
+    .section-h2 { font-family:'Playfair Display',serif; font-size:2.6rem; color:var(--charcoal); margin-bottom:48px; }
+    .section-h2 em { color:var(--clay); font-style:italic; }
+    .steps { display:grid; grid-template-columns:repeat(3,1fr); gap:32px; }
+    .step { background:var(--warm-white); border:1px solid var(--sand); border-radius:20px; padding:36px 28px; transition:transform 0.2s, box-shadow 0.2s; }
+    .step:hover { transform:translateY(-4px); box-shadow:0 16px 40px rgba(100,60,30,0.1); }
+    .step-num { font-family:'Playfair Display',serif; font-size:3rem; color:var(--sand); line-height:1; margin-bottom:16px; }
+    .step-icon { font-size:2rem; margin-bottom:12px; }
+    .step-title { font-family:'Playfair Display',serif; font-size:1.3rem; color:var(--charcoal); margin-bottom:10px; }
+    .step-desc { color:#6B6055; font-size:0.9rem; line-height:1.65; }
+    .design-section { background:var(--light-clay); padding:80px; }
+    .design-tool { background:var(--warm-white); border-radius:24px; padding:40px; border:1px solid var(--sand); }
+    .design-grid { display:grid; grid-template-columns:1fr 1fr; gap:40px; }
+    .upload-zone { border:2px dashed var(--clay); border-radius:16px; padding:60px 30px; text-align:center; cursor:pointer; transition:background 0.2s; }
+    .upload-zone:hover { background:var(--light-clay); }
+    .upload-zone-icon { font-size:2.5rem; margin-bottom:12px; }
+    .upload-zone-title { font-family:'Playfair Display',serif; font-size:1.2rem; color:var(--charcoal); margin-bottom:6px; }
+    .upload-zone-sub { color:#8A7A6E; font-size:0.85rem; }
+    .uploaded-preview { border-radius:16px; background:linear-gradient(135deg, var(--sand), var(--clay)); min-height:160px; display:flex; align-items:center; justify-content:center; color:var(--warm-white); font-family:'Playfair Display',serif; font-size:1.1rem; flex-direction:column; gap:8px; padding:20px; }
+    .change-btn { background:none; border:1.5px solid rgba(255,255,255,0.6); color:white; border-radius:20px; padding:5px 14px; font-size:0.78rem; cursor:pointer; margin-top:8px; font-family:'Lato',sans-serif; }
+    .style-label { font-size:0.8rem; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:var(--bark); margin-bottom:14px; margin-top:20px; }
+    .style-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:4px; }
+    .style-chip { border:2px solid var(--sand); border-radius:12px; padding:12px 8px; text-align:center; cursor:pointer; transition:all 0.18s; background:var(--warm-white); }
+    .style-chip:hover { border-color:var(--clay); }
+    .style-chip.active { border-color:var(--clay); background:var(--light-clay); }
+    .style-chip-icon { font-size:1.4rem; display:block; margin-bottom:4px; }
+    .style-chip-name { font-size:0.75rem; font-weight:700; color:var(--bark); }
+    .room-types { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:8px; }
+    .room-tag { border:1.5px solid var(--sand); border-radius:20px; padding:6px 14px; font-size:0.8rem; color:var(--bark); cursor:pointer; transition:all 0.18s; font-weight:700; background:var(--warm-white); font-family:'Lato',sans-serif; }
+    .room-tag:hover, .room-tag.active { background:var(--bark); color:var(--warm-white); border-color:var(--bark); }
+    .generate-btn { width:100%; background:linear-gradient(135deg, var(--clay) 0%, var(--terracotta) 100%); color:var(--warm-white); border:none; padding:16px; border-radius:30px; font-size:1rem; font-weight:700; cursor:pointer; transition:all 0.2s; font-family:'Lato',sans-serif; margin-top:20px; }
+    .generate-btn:hover { transform:translateY(-2px); box-shadow:0 10px 28px rgba(181,99,74,0.35); }
+    .result-area { min-height:400px; display:flex; align-items:center; justify-content:center; }
+    .result-empty { text-align:center; color:#A09080; }
+    .result-empty-icon { font-size:3rem; margin-bottom:12px; }
+    .result-empty-title { font-family:'Playfair Display',serif; font-size:1.1rem; color:var(--bark); margin-bottom:8px; }
+    .result-empty-sub { font-size:0.85rem; max-width:260px; }
+    .generating { display:flex; flex-direction:column; align-items:center; gap:16px; }
+    .gen-icon { font-size:3rem; animation:spin 2s linear infinite; }
+    @keyframes spin { 0%{transform:rotate(0deg)} 100%{transform:rotate(360deg)} }
+    .gen-text { color:var(--clay); font-style:italic; font-family:'Playfair Display',serif; font-size:1.1rem; }
+    .dots { display:inline-flex; gap:4px; }
+    .dot { width:6px; height:6px; background:var(--clay); border-radius:50%; animation:bounce 1.2s ease-in-out infinite; }
+    .dot:nth-child(2){animation-delay:0.2s} .dot:nth-child(3){animation-delay:0.4s}
+    @keyframes bounce{0%,100%{opacity:0.3;transform:translateY(0)}50%{opacity:1;transform:translateY(-4px)}}
+    .result-mock { width:100%; }
+    .result-title { font-family:'Playfair Display',serif; font-size:1rem; color:var(--charcoal); margin-bottom:14px; }
+    .result-image { background:linear-gradient(160deg, #D4B896 0%, #A07850 100%); border-radius:12px; height:180px; display:flex; align-items:center; justify-content:center; color:var(--warm-white); font-family:'Playfair Display',serif; margin-bottom:16px; flex-direction:column; gap:8px; }
+    .product-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    .product-card { background:var(--warm-white); border-radius:12px; padding:12px; border:1px solid var(--sand); cursor:pointer; transition:all 0.18s; }
+    .product-card:hover { border-color:var(--clay); box-shadow:0 4px 12px rgba(100,60,30,0.1); }
+    .product-img { background:var(--sand); border-radius:8px; height:60px; display:flex; align-items:center; justify-content:center; font-size:1.4rem; margin-bottom:8px; }
+    .product-name { font-size:0.78rem; font-weight:700; color:var(--charcoal); margin-bottom:2px; }
+    .product-store { font-size:0.72rem; color:var(--clay); }
+    .product-price { font-size:0.82rem; font-weight:700; color:var(--bark); margin-top:4px; }
+    .shop-link { font-size:0.7rem; color:var(--moss); font-weight:700; text-transform:uppercase; letter-spacing:0.08em; margin-top:4px; display:block; }
+    .pricing-section { padding:80px; background:var(--warm-white); }
+    .pricing-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:24px; }
+    .plan-card { border:1.5px solid var(--sand); border-radius:24px; padding:36px 28px; position:relative; transition:all 0.2s; }
+    .plan-card:hover { transform:translateY(-4px); box-shadow:0 16px 40px rgba(100,60,30,0.1); }
+    .plan-card.featured { background:var(--bark); border-color:var(--bark); color:var(--warm-white); }
+    .plan-badge { position:absolute; top:-12px; left:50%; transform:translateX(-50%); background:var(--clay); color:var(--warm-white); font-size:0.72rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; padding:5px 14px; border-radius:20px; white-space:nowrap; }
+    .plan-name { font-family:'Playfair Display',serif; font-size:1.4rem; margin-bottom:4px; }
+    .plan-card.featured .plan-name { color:var(--sand); }
+    .plan-price { font-family:'Playfair Display',serif; font-size:2.8rem; margin:16px 0 4px; }
+    .plan-price span { font-size:1rem; font-family:'Lato',sans-serif; font-weight:400; opacity:0.7; }
+    .plan-card.featured .plan-price { color:var(--warm-white); }
+    .plan-desc { font-size:0.85rem; opacity:0.7; margin-bottom:24px; line-height:1.5; }
+    .plan-features { list-style:none; margin-bottom:32px; }
+    .plan-features li { font-size:0.88rem; padding:8px 0; border-bottom:1px solid rgba(0,0,0,0.06); display:flex; align-items:center; gap:10px; }
+    .plan-card.featured .plan-features li { border-bottom-color:rgba(255,255,255,0.1); }
+    .feat-check { color:var(--moss); font-size:1rem; }
+    .plan-card.featured .feat-check { color:var(--sand); }
+    .plan-btn { width:100%; padding:13px; border-radius:30px; font-size:0.92rem; font-weight:700; cursor:pointer; transition:all 0.2s; font-family:'Lato',sans-serif; }
+    .plan-btn-outline { background:transparent; border:2px solid var(--clay); color:var(--bark); }
+    .plan-btn-outline:hover { background:var(--light-clay); }
+    .plan-btn-filled { background:var(--clay); border:none; color:var(--warm-white); }
+    .plan-btn-filled:hover { background:var(--terracotta); transform:translateY(-1px); }
+    .footer { background:var(--charcoal); color:rgba(232,213,183,0.7); padding:40px 80px; display:flex; justify-content:space-between; align-items:center; }
+    .footer-logo { font-family:'Playfair Display',serif; font-size:1.4rem; color:var(--sand); }
+    .footer-logo span { color:var(--clay); font-style:italic; }
+    .footer-copy { font-size:0.8rem; }
+    .modal-overlay { position:fixed; inset:0; background:rgba(46,42,38,0.7); z-index:200; display:flex; align-items:center; justify-content:center; backdrop-filter:blur(4px); }
+    .modal-overlay.hidden { display:none; }
+    .modal { background:var(--warm-white); border-radius:24px; padding:40px; width:420px; max-width:95vw; }
+    .modal-title { font-family:'Playfair Display',serif; font-size:1.8rem; color:var(--charcoal); margin-bottom:6px; }
+    .modal-sub { color:#8A7A6E; font-size:0.9rem; margin-bottom:28px; }
+    .modal-input { width:100%; border:1.5px solid var(--sand); border-radius:12px; padding:12px 16px; font-size:0.95rem; font-family:'Lato',sans-serif; color:var(--charcoal); background:var(--warm-white); margin-bottom:14px; outline:none; transition:border-color 0.2s; }
+    .modal-input:focus { border-color:var(--clay); }
+    .modal-btn { width:100%; background:var(--bark); color:var(--warm-white); border:none; padding:14px; border-radius:30px; font-size:0.95rem; font-weight:700; cursor:pointer; font-family:'Lato',sans-serif; margin-bottom:10px; }
+    .modal-btn:hover { background:var(--clay); }
+    .modal-close-btn { width:100%; background:transparent; border:none; color:#8A7A6E; font-size:0.88rem; cursor:pointer; font-family:'Lato',sans-serif; }
+    @media(max-width:768px) {
+      .hero { grid-template-columns:1fr; }
+      .hero-right { display:none; }
+      .hero-left { padding:40px 24px; }
+      .hero-h1 { font-size:2.4rem; }
+      .steps, .pricing-grid { grid-template-columns:1fr; }
+      .design-grid { grid-template-columns:1fr; }
+      .section, .design-section, .pricing-section { padding:40px 24px; }
+      .nav { padding:16px 20px; }
+      .nav-links a:not(.nav-cta) { display:none; }
+      .stats { flex-wrap:wrap; }
+      .stat { flex:1 1 50%; }
+      .footer { flex-direction:column; gap:12px; text-align:center; padding:30px 24px; }
+    }
+  </style>
+</head>
+<body>
+<nav class="nav">
+  <div class="logo">nest<span>wise</span></div>
+  <div class="nav-links">
+    <a onclick="scrollToSection('how')">How It Works</a>
+    <a onclick="scrollToSection('design')">Design</a>
+    <a onclick="scrollToSection('pricing')">Pricing</a>
+    <a class="nav-cta" onclick="openModal(null)">Get Started</a>
+  </div>
+</nav>
+<section class="hero">
+  <div class="hero-left">
+    <div class="hero-tag">✦ AI-Powered Interior Design</div>
+    <h1 class="hero-h1">Your dream home,<br /><em>designed in minutes</em></h1>
+    <p class="hero-sub">Upload a photo of any room, choose your style, and let our AI reimagine your space — complete with shoppable product links from your favourite stores.</p>
+    <div class="hero-btns">
+      <button class="btn-primary" onclick="openModal(null)">Start Designing Free</button>
+      <button class="btn-secondary" onclick="scrollToSection('design')">See Examples →</button>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-img-grid">
+      <div class="room-card room-card-1">
+        <div class="room-placeholder" style="background:linear-gradient(160deg,#D4B89A,#8B6348);min-height:340px;">
+          <div style="font-size:3rem">🛋️</div>
+          <div>Bohemian Living Room</div>
+        </div>
+        <div class="room-badge">
+          <div class="room-badge-label">Redesigned</div>
+          <div class="room-badge-name">Bohemian Style</div>
+        </div>
+      </div>
+      <div class="room-card">
+        <div class="room-placeholder" style="background:linear-gradient(160deg,#C8A882,#7A9B7A);min-height:160px;">
+          <div style="font-size:2rem">🌿</div>
+          <div style="font-size:0.85rem">Japandi Bedroom</div>
+        </div>
+      </div>
+      <div class="room-card">
+        <div class="room-placeholder" style="background:linear-gradient(160deg,#B5906A,#8B7355);min-height:160px;">
+          <div style="font-size:2rem">🪵</div>
+          <div style="font-size:0.85rem">Farmhouse Kitchen</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="stats">
+  <div class="stat"><div class="stat-num">50K+</div><div class="stat-label">Rooms Redesigned</div></div>
+  <div class="stat"><div class="stat-num">200+</div><div class="stat-label">Shoppable Products</div></div>
+  <div class="stat"><div class="stat-num">4.9★</div><div class="stat-label">Average Rating</div></div>
+  <div class="stat"><div class="stat-num">12</div><div class="stat-label">Design Styles</div></div>
+</div>
+<section class="section" id="how">
+  <div class="section-tag">✦ The Process</div>
+  <h2 class="section-h2">Three steps to a <em>beautiful</em> space</h2>
+  <div class="steps">
+    <div class="step"><div class="step-num">01</div><div class="step-icon">📸</div><div class="step-title">Upload Your Room</div><p class="step-desc">Take a photo of any room and upload it. Our AI analyses the layout, lighting, and dimensions.</p></div>
+    <div class="step"><div class="step-num">02</div><div class="step-icon">🎨</div><div class="step-title">Choose Your Style</div><p class="step-desc">Browse 12 curated design styles from Japandi to Coastal Chic. Mix moods and set your preferences.</p></div>
+    <div class="step"><div class="step-num">03</div><div class="step-icon">🛍️</div><div class="step-title">Shop the Look</div><p class="step-desc">Your redesigned room arrives with a curated product list linked directly to retailers. One click to shop.</p></div>
+  </div>
+</section>
+<section class="design-section" id="design">
+  <div class="section-tag">✦ Try It Now</div>
+  <h2 class="section-h2" style="margin-bottom:32px">Design your <em>perfect room</em></h2>
+  <div class="design-tool">
+    <div class="design-grid">
+      <div>
+        <div id="upload-zone" class="upload-zone" onclick="handleUpload()">
+          <div class="upload-zone-icon">📷</div>
+          <div class="upload-zone-title">Drop your room photo here</div>
+          <div class="upload-zone-sub">or click to browse — JPG, PNG, HEIC</div>
+        </div>
+        <div id="uploaded-preview" class="uploaded-preview" style="display:none">
+          <span style="font-size:2.5rem">🏠</span>
+          <span>Room photo uploaded!</span>
+          <button class="change-btn" onclick="removeUpload()">Change Photo</button>
+        </div>
+        <div class="style-label">Room Type</div>
+        <div class="room-types">
+          <button class="room-tag active" onclick="selectRoom(this)">Living Room</button>
+          <button class="room-tag" onclick="selectRoom(this)">Bedroom</button>
+          <button class="room-tag" onclick="selectRoom(this)">Kitchen</button>
+          <button class="room-tag" onclick="selectRoom(this)">Dining Room</button>
+          <button class="room-tag" onclick="selectRoom(this)">Bathroom</button>
+          <button class="room-tag" onclick="selectRoom(this)">Office</button>
+          <button class="room-tag" onclick="selectRoom(this)">Outdoor</button>
+        </div>
+        <div class="style-label">Design Style</div>
+        <div class="style-grid">
+          <div class="style-chip" onclick="selectStyle(this,'Scandinavian')"><span class="style-chip-icon">🪵</span><span class="style-chip-name">Scandinavian</span></div>
+          <div class="style-chip active" onclick="selectStyle(this,'Bohemian')"><span class="style-chip-icon">🌿</span><span class="style-chip-name">Bohemian</span></div>
+          <div class="style-chip" onclick="selectStyle(this,'Japandi')"><span class="style-chip-icon">⛩️</span><span class="style-chip-name">Japandi</span></div>
+          <div class="style-chip" onclick="selectStyle(this,'Coastal')"><span class="style-chip-icon">🌊</span><span class="style-chip-name">Coastal</span></div>
+          <div class="style-chip" onclick="selectStyle(this,'Farmhouse')"><span class="style-chip-icon">🏡</span><span class="style-chip-name">Farmhouse</span></div>
+          <div class="style-chip" onclick="selectStyle(this,'Modern')"><span class="style-chip-icon">◼️</span><span class="style-chip-name">Modern</span></div>
+        </div>
+        <button class="generate-btn" onclick="generate()">✨ Generate My Design</button>
+      </div>
+      <div>
+        <div class="result-area" id="result-area">
+          <div class="result-empty">
+            <div class="result-empty-icon">🏡</div>
+            <div class="result-empty-title">Your redesign will appear here</div>
+            <div class="result-empty-sub">Upload a photo and select your style to get started</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="pricing-section" id="pricing">
+  <div class="section-tag">✦ Pricing</div>
+  <h2 class="section-h2">Simple, <em>honest</em> pricing</h2>
+  <div class="pricing-grid">
+    <div class="plan-card">
+      <div class="plan-name">Basic</div>
+      <div class="plan-price">$9<span>/mo</span></div>
+      <p class="plan-desc">Perfect for one-room refreshes and getting started.</p>
+      <ul class="plan-features">
+        <li><span class="feat-check">✓</span> 3 room redesigns/month</li>
+        <li><span class="feat-check">✓</span> 5 design styles</li>
+        <li><span class="feat-check">✓</span> Product links included</li>
+        <li><span class="feat-check">✓</span> HD image export</li>
+        <li><span class="feat-check">✓</span> Email support</li>
+      </ul>
+      <button class="plan-btn plan-btn-outline" onclick="openModal('Basic')">Start Basic</button>
+    </div>
+    <div class="plan-card featured">
+      <div class="plan-badge">Most Popular</div>
+      <div class="plan-name">Pro</div>
+      <div class="plan-price">$24<span>/mo</span></div>
+      <p class="plan-desc">For design lovers ready to transform their whole home.</p>
+      <ul class="plan-features">
+        <li><span class="feat-check">✓</span> 20 redesigns/month</li>
+        <li><span class="feat-check">✓</span> All 12 design styles</li>
+        <li><span class="feat-check">✓</span> Before & after comparison</li>
+        <li><span class="feat-check">✓</span> Curated shopping lists</li>
+        <li><span class="feat-check">✓</span> Priority support</li>
+        <li><span class="feat-check">✓</span> Save & share boards</li>
+      </ul>
+      <button class="plan-btn plan-btn-filled" onclick="openModal('Pro')">Start Pro</button>
+    </div>
+    <div class="plan-card">
+      <div class="plan-name">Premium</div>
+      <div class="plan-price">$49<span>/mo</span></div>
+      <p class="plan-desc">Unlimited creativity for the serious home transformer.</p>
+      <ul class="plan-features">
+        <li><span class="feat-check">✓</span> Unlimited redesigns</li>
+        <li><span class="feat-check">✓</span> All styles + custom</li>
+        <li><span class="feat-check">✓</span> 1:1 designer consultation</li>
+        <li><span class="feat-check">✓</span> Exclusive retailer discounts</li>
+        <li><span class="feat-check">✓</span> API access</li>
+        <li><span class="feat-check">✓</span> Dedicated account manager</li>
+      </ul>
+      <button class="plan-btn plan-btn-outline" onclick="openModal('Premium')">Start Premium</button>
+    </div>
+  </div>
+</section>
+<footer class="footer">
+  <div class="footer-logo">nest<span>wise</span></div>
+  <div class="footer-copy">© 2026 Nestwise · Reimagining spaces, beautifully.</div>
+</footer>
+<div class="modal-overlay hidden" id="modal-overlay" onclick="closeModal(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-title" id="modal-title">Welcome home ✦</div>
+    <div class="modal-sub" id="modal-sub">Create your free account to start designing.</div>
+    <input class="modal-input" placeholder="Your name" />
+    <input class="modal-input" placeholder="Email address" />
+    <div id="card-field"></div>
+    <button class="modal-btn" id="modal-btn-text" onclick="closeModalDirect()">Create Free Account</button>
+    <button class="modal-close-btn" onclick="closeModalDirect()">No thanks, maybe later</button>
+  </div>
+</div>
+<script>
+  let currentStyle = 'Bohemian';
+  let currentStyleIcon = '🌿';
+  let currentRoom = 'Living Room';
+  const products = [
+    { icon:'🛋️', name:'Linen Sofa', store:'West Elm', price:'$1,299' },
+    { icon:'🪴', name:'Terracotta Planter', store:'CB2', price:'$89' },
+    { icon:'🕯️', name:'Arch Floor Lamp', store:'IKEA', price:'$179' },
+    { icon:'🪞', name:'Rattan Mirror', store:'Anthropologie', price:'$248' },
+  ];
+  function scrollToSection(id) { document.getElementById(id).scrollIntoView({ behavior:'smooth' }); }
+  function handleUpload() { document.getElementById('upload-zone').style.display='none'; document.getElementById('uploaded-preview').style.display='flex'; }
+  function removeUpload() { document.getElementById('upload-zone').style.display='block'; document.getElementById('uploaded-preview').style.display='none'; document.getElementById('result-area').innerHTML='<div class="result-empty"><div class="result-empty-icon">🏡</div><div class="result-empty-title">Your redesign will appear here</div><div class="result-empty-sub">Upload a photo and select your style to get started</div></div>'; }
+  function selectRoom(el) { document.querySelectorAll('.room-tag').forEach(t=>t.classList.remove('active')); el.classList.add('active'); currentRoom=el.textContent; }
+  function selectStyle(el,name) { document.querySelectorAll('.style-chip').forEach(c=>c.classList.remove('active')); el.classList.add('active'); currentStyle=name; currentStyleIcon=el.querySelector('.style-chip-icon').textContent; }
+  function generate() {
+    const btn=document.querySelector('.generate-btn');
+    btn.textContent='✨ Designing your room...'; btn.disabled=true;
+    document.getElementById('result-area').innerHTML='<div class="generating"><div class="gen-icon">🪄</div><div class="gen-text">Designing your '+currentRoom.toLowerCase()+'</div><div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div>';
+    setTimeout(()=>{
+      const cards=products.map(p=>'<div class="product-card"><div class="product-img">'+p.icon+'</div><div class="product-name">'+p.name+'</div><div class="product-store">'+p.store+'</div><div class="product-price">'+p.price+'</div><span class="shop-link">Shop Now →</span></div>').join('');
+      document.getElementById('result-area').innerHTML='<div class="result-mock" style="width:100%"><div class="result-title">✨ Your '+currentStyle+' '+currentRoom+'</div><div class="result-image"><div style="font-size:3rem">'+currentStyleIcon+'</div><div>Redesigned '+currentRoom+'</div><div style="font-size:0.8rem;opacity:0.8">'+currentStyle+' Style</div></div><div class="style-label">Shop This Look</div><div class="product-grid">'+cards+'</div></div>';
+      btn.textContent='✨ Generate My Design'; btn.disabled=false;
+    },2200);
+  }
+  function openModal(plan) {
+    const overlay=document.getElementById('modal-overlay');
+    if(plan){ document.getElementById('modal-title').textContent=plan+' Plan ✦'; document.getElementById('modal-sub').textContent='Start your '+plan+' plan — cancel anytime.'; document.getElementById('modal-btn-text').textContent='Subscribe to '+plan; document.getElementById('card-field').innerHTML='<input class="modal-input" placeholder="Card number" />'; }
+    else { document.getElementById('modal-title').textContent='Welcome home ✦'; document.getElementById('modal-sub').textContent='Create your free account to start designing.'; document.getElementById('modal-btn-text').textContent='Create Free Account'; document.getElementById('card-field').innerHTML=''; }
+    overlay.classList.remove('hidden');
+  }
+  function closeModal(e) { if(!e||e.target===document.getElementById('modal-overlay')) document.getElementById('modal-overlay').classList.add('hidden'); }
+  function closeModalDirect() { document.getElementById('modal-overlay').classList.add('hidden'); }
+</script>
+</body>
+</html>
